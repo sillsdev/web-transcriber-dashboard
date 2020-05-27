@@ -1,4 +1,5 @@
 import React from 'react';
+import Axios from 'axios';
 import {
   makeStyles,
   createStyles,
@@ -78,8 +79,28 @@ const StyledTableRow = withStyles((theme: Theme) =>
   })
 )(TableRow);
 
+interface RowData {
+  [key: string]: {
+    total: number;
+    month: number;
+    week: number;
+  };
+}
+
 export const Report = () => {
   const classes = useStyles();
+  const [data, setData] = React.useState<RowData>({});
+
+  React.useEffect(() => {
+    const host = process.env.REACT_APP_API || '';
+    Axios.get(host).then((response) => {
+      setData(response.data.data.attributes);
+    });
+  }, []);
+
+  const titleCase = (s: string) => {
+    return s[0].toUpperCase() + s.slice(1);
+  };
 
   return (
     <div className={classes.root}>
@@ -94,14 +115,20 @@ export const Report = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.name}>
+            {Object.keys(data).map((key) => (
+              <StyledTableRow key={key}>
                 <StyledTableCell component="th" scope="row">
-                  {row.name}
+                  {titleCase(key)}
                 </StyledTableCell>
-                <StyledTableCell align="right">{row.total}</StyledTableCell>
-                <StyledTableCell align="right">{row.lastMonth}</StyledTableCell>
-                <StyledTableCell align="right">{row.lastWeek}</StyledTableCell>
+                <StyledTableCell align="right">
+                  {data[key].total}
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  {data[key].month}
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  {data[key].week}
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
