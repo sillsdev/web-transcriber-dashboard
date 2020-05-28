@@ -62,6 +62,7 @@ const StyledTableRow = withStyles((theme: Theme) =>
 
 interface RowData {
   [key: string]: {
+    id: string;
     total: number;
     month: number;
     week: number;
@@ -79,10 +80,6 @@ export const Report = () => {
     });
   }, []);
 
-  const titleCase = (s: string) => {
-    return s[0].toUpperCase() + s.slice(1);
-  };
-
   return (
     <div className={classes.root}>
       <TableContainer component={Paper} className={classes.paper}>
@@ -99,7 +96,7 @@ export const Report = () => {
             {Object.keys(data).map((key) => (
               <StyledTableRow key={key}>
                 <StyledTableCell component="th" scope="row">
-                  {titleCase(key)}
+                  {data[key].id}
                 </StyledTableCell>
                 <StyledTableCell align="right">
                   {data[key].total}
